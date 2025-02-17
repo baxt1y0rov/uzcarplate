@@ -1,0 +1,107 @@
+@font-face {
+  font-family: 'FE-Schrift';
+  src: url('./assets/FE-FONT.TTF') format('truetype');
+  /* Ensure you have the correct path to the FE-Schrift font file */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f0f0f0;
+  padding: 20px;
+}
+
+.license-plate {
+  background: white;
+  outline: 5px solid #fff;
+  border: 2.5px solid #000;
+  border-radius: 10px;
+  display: flex;
+  width: 351.2px;
+  height: 70.2px;
+  position: relative;
+  font-family: 'FE-Schrift', sans-serif;
+}
+
+.divider {
+  width: 2.2px;
+  height: 100%;
+  background: #000;
+}
+
+.left-section {
+  width: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  font-weight: normal;
+}
+
+.right-section {
+  flex: 1;
+  display: flex;
+  justify-content: left;
+  margin-left: 20px;
+  align-items: center;
+  position: relative;
+}
+
+.plate-number {
+  font-size: 34.5px;
+  font-weight: normal;
+  letter-spacing: 0px;
+  display: flex;
+  gap: 15px;
+}
+
+.letter, .number {
+  font-family: 'FE-Schrift', sans-serif;
+}
+
+.country-code {
+  position: absolute;
+  top: 15px;
+  right: 25px;
+  display: table-column;
+}
+
+.flag {
+  width: 30px;
+  height: 20px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 4px;
+}
+
+.stripe {
+  height: 33.33%;
+}
+
+.blue {
+  background: #0099B5;
+}
+
+.white {
+  background: white;
+}
+
+.green {
+  background: #00A84F;
+}
+
+.uz {
+  color: #0099B5;
+  font-size: 18px;
+  font-weight: normal;
+  margin-left: 4px;
+  font-family: 'FE-Schrift', sans-serif;
+}
