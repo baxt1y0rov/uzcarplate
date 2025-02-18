@@ -6,47 +6,74 @@ import Flag from "./assets/flag.jpeg";
 function App() {
   const plateRef = useRef(null);
 
-  // Function to extract and use the license plate text as filename
   const downloadLicensePlate = async () => {
     if (!plateRef.current) return;
-
-    // Get text from input fields and join them
-    const licensePlateContent = Array.from(plateRef.current.querySelectorAll("input"))
-      .map(input => input.value.trim() || input.placeholder)
-      .join("");
-
-    const filename = `${licensePlateContent}.png`;
-
-    const canvas = await html2canvas(plateRef.current, {
-      backgroundColor: null,
-      scale: 6,
+  
+    // Convert inputs to spans for better rendering
+    const inputs = plateRef.current.querySelectorAll("input");
+    const inputValues = [];
+  
+    inputs.forEach((input, index) => {
+      inputValues.push(input.value || input.placeholder); // Store value or placeholder
+      const span = document.createElement("span");
+      span.textContent = input.value || input.placeholder;
+      span.style.cssText = `
+        display: inline-block;
+        width: ${input.offsetWidth}px;
+        height: ${input.offsetHeight}px;
+        text-align: center;
+        font-size: ${window.getComputedStyle(input).fontSize};
+        font-family: ${window.getComputedStyle(input).fontFamily};
+        font-weight: ${window.getComputedStyle(input).fontWeight};
+      `;
+      input.replaceWith(span);
+      input.dataset.tempSpan = index; // Mark for restoration
     });
-
+  
+    // Take screenshot
+    const canvas = await html2canvas(plateRef.current, {
+      backgroundColor: "#ffffff", // Ensures correct background
+      scale: 4, // Improves resolution
+      useCORS: true,
+    });
+  
+    // Restore inputs
+    plateRef.current.querySelectorAll("span").forEach((span) => {
+      const index = span.dataset.tempSpan;
+      if (index !== undefined) {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = inputValues[index];
+        input.style.cssText = span.style.cssText; // Maintain styling
+        span.replaceWith(input);
+      }
+    });
+  
+    // Save the image
     const image = canvas.toDataURL("image/png");
-
+    const filename = `${inputValues.join("")}.png`;
+  
     const link = document.createElement("a");
     link.href = image;
     link.download = filename;
     link.click();
   };
 
-  // Handle user input and automatically move between fields
+
   const handleInput = (e, maxLength, type, nextFieldId, prevFieldId) => {
-    let value = e.target.value.toUpperCase(); // Convert to uppercase
+    let value = e.target.value.toUpperCase(); 
 
-    if (type === "number") value = value.replace(/\D/g, ""); // Only numbers
-    if (type === "letter") value = value.replace(/[^A-Z]/g, ""); // Only uppercase letters
+    if (type === "number") value = value.replace(/\D/g, ""); 
+    if (type === "letter") value = value.replace(/[^A-Z]/g, ""); 
 
-    if (value.length > maxLength) value = value.slice(0, maxLength); // Limit length
-    e.target.value = value; // Set cleaned value
-
-    // Move to next input when max length reached
+    if (value.length > maxLength) value = value.slice(0, maxLength); 
+    e.target.value = value; 
     if (value.length === maxLength && nextFieldId) {
       document.getElementById(nextFieldId)?.focus();
     }
   };
 
-  // Handle backspace: move to previous field when empty
+
   const handleBackspace = (e, prevFieldId) => {
     if (e.key === "Backspace" && e.target.value.length === 0 && prevFieldId) {
       document.getElementById(prevFieldId)?.focus();
