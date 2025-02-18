@@ -6,13 +6,15 @@ import Flag from "./assets/flag.jpeg";
 function App() {
   const plateRef = useRef(null);
 
+  // Function to extract and use the license plate text as filename
   const downloadLicensePlate = async () => {
     if (!plateRef.current) return;
 
-    // Extract the content from all relevant spans
-    const licensePlateContent = Array.from(plateRef.current.querySelectorAll('span')).map(span => span.textContent.trim()).join('');
-    
-    // Use the extracted content as the filename (e.g., "01A123BC")
+    // Get text from input fields and join them
+    const licensePlateContent = Array.from(plateRef.current.querySelectorAll("input"))
+      .map(input => input.value.trim() || input.placeholder)
+      .join("");
+
     const filename = `${licensePlateContent}.png`;
 
     const canvas = await html2canvas(plateRef.current, {
@@ -24,81 +26,77 @@ function App() {
 
     const link = document.createElement("a");
     link.href = image;
-    link.download = filename; // Set the dynamically generated filename
+    link.download = filename;
     link.click();
   };
 
-  // Function to handle input while preserving placeholders
-  const handleInput = (e, maxLength, type, placeholder) => {
-    const selection = window.getSelection();
-    const range = selection.getRangeAt(0);
-    const startOffset = range.startOffset;
+  // Handle user input and automatically move between fields
+  const handleInput = (e, maxLength, type, nextFieldId, prevFieldId) => {
+    let value = e.target.value.toUpperCase(); // Convert to uppercase
 
-    let text = e.target.textContent;
+    if (type === "number") value = value.replace(/\D/g, ""); // Only numbers
+    if (type === "letter") value = value.replace(/[^A-Z]/g, ""); // Only uppercase letters
 
+    if (value.length > maxLength) value = value.slice(0, maxLength); // Limit length
+    e.target.value = value; // Set cleaned value
 
-    if (type === "number") {
-      text = text.replace(/\D/g, "");
-    } else if (type === "letter") {
-      text = text.replace(/[^A-Z]/g, "").toUpperCase(); // Only uppercase letters
+    // Move to next input when max length reached
+    if (value.length === maxLength && nextFieldId) {
+      document.getElementById(nextFieldId)?.focus();
     }
+  };
 
-    if (text.length > maxLength) {
-      text = text.substring(0, maxLength);
+  // Handle backspace: move to previous field when empty
+  const handleBackspace = (e, prevFieldId) => {
+    if (e.key === "Backspace" && e.target.value.length === 0 && prevFieldId) {
+      document.getElementById(prevFieldId)?.focus();
     }
-
-    // Replace the placeholder with the new input
-    if (placeholder === "--" && text.length < 2) {
-      text = "--".slice(0, text.length) + text;
-    } else if (placeholder === "_" && text.length < 1) {
-      text = "_".slice(0, text.length) + text;
-    }
-
-    e.target.textContent = text;
-
-    // Restore cursor position
-    const newOffset = Math.min(startOffset, text.length);
-    range.setStart(e.target.childNodes[0], newOffset);
-    range.setEnd(e.target.childNodes[0], newOffset);
-    selection.removeAllRanges();
-    selection.addRange(range);
   };
 
   return (
     <div className="container">
       <div className="license-plate" ref={plateRef}>
         <div className="left-section">
-          <span
-            contentEditable
-            onInput={(e) => handleInput(e, 2, "number", "--")} // Max 2 digits
-          >
-            --
-          </span>
+          <input
+            className="tleft-section"
+            id="region"
+            type="text"
+            placeholder="--"
+            maxLength="2"
+            onInput={(e) => handleInput(e, 2, "number", "letter1", null)}
+            onKeyDown={(e) => handleBackspace(e, null)}
+          />
         </div>
         <div className="divider"></div>
         <div className="right-section">
           <div className="plate-number">
-            <span
-              className="letter"
-              contentEditable
-              onInput={(e) => handleInput(e, 1, "letter", "_")} // Max 1 letter
-            >
-              _
-            </span>
-            <span
-              className="number"
-              contentEditable
-              onInput={(e) => handleInput(e, 3, "number", "--")} // Max 3 digits
-            >
-              ---
-            </span>
-            <span
-              className="letter"
-              contentEditable
-              onInput={(e) => handleInput(e, 2, "letter", "_")} // Max 2 letters
-            >
-              __
-            </span>
+            <input
+              className="plate-number1"
+              id="letter1"
+              type="text"
+              placeholder="_"
+              maxLength="1"
+              onInput={(e) => handleInput(e, 1, "letter", "number", "region")}
+              onKeyDown={(e) => handleBackspace(e, "region")}
+            />
+            <input
+              className="plate-number2"
+              id="number"
+              type="text"
+              placeholder="---"
+              maxLength="3"
+              onInput={(e) => handleInput(e, 3, "number", "letter2", "letter1")}
+              onKeyDown={(e) => handleBackspace(e, "letter1")}
+            />
+            <input
+              className="plate-number3"  
+              id="letter2"
+              type="text"
+              placeholder="__"
+              maxLength="2"
+              onInput={(e) => handleInput(e, 2, "letter", null, "number")}
+              onKeyDown={(e) => handleBackspace(e, "number")}
+            />
           </div>
           <div className="country-code">
             <div className="flag">

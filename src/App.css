@@ -61,6 +61,16 @@ body {
   align-items: center;
   font-size: 32px;
   font-weight: normal;
+  border: 0px;
+  font-family:'FE-Schrift' ;
+}
+.tleft-section {
+  width: 45px;
+  font-size: 32px;
+  font-weight: normal;
+  border: 0px;
+  font-family:'FE-Schrift';
+  outline: none;
 }
 
 .right-section {
@@ -72,13 +82,50 @@ body {
   position: relative;
 }
 
-.plate-number {
+.plate-number{
+  font-family:'FE-Schrift';
   font-size: 34.5px;
   font-weight: normal;
   letter-spacing: 0px;
   display: flex;
   gap: 15px;
 }
+.plate-number1{
+  outline: none;
+  font-family:'FE-Schrift';
+  font-size: 34.5px;
+  width: 30px;
+  font-weight: normal;
+  letter-spacing: 0px;
+  display: flex;
+  border: 0px;
+
+}
+.plate-number2{
+  outline: none;
+  font-family:'FE-Schrift';
+  display: flex;
+  justify-content: center;
+  width:70px;
+  font-size: 34.5px;
+  font-weight: normal;
+  letter-spacing: 0px;
+  display: flex;
+  border: 0px;
+  
+}
+.plate-number3{
+  outline: none;
+  border: 0px;
+  font-family:'FE-Schrift'; 
+  width: 50px;
+  font-size: 34.5px;
+  font-weight: normal;
+  letter-spacing: 0px;
+  display: flex;
+  
+}
+
 
 .letter, .number {
   font-family: 'FE-Schrift', sans-serif;
