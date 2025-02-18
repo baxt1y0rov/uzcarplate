@@ -27,12 +27,12 @@ function App() {
         font-weight: ${window.getComputedStyle(input).fontWeight};
       `;
       input.replaceWith(span);
-      input.dataset.tempSpan = index; // Mark for restoration
+      input.dataset.tempSpan = index;
     });
   
     // Take screenshot
     const canvas = await html2canvas(plateRef.current, {
-      backgroundColor: "#ffffff", // Ensures correct background
+      backgroundColor: 'rgba(52, 52, 52, 0.0)', // Ensures correct background
       scale: 4, // Improves resolution
       useCORS: true,
     });
